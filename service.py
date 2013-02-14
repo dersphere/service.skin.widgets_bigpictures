@@ -19,6 +19,7 @@
 
 import random
 
+import xbmc
 import xbmcgui
 
 from thebigpictures import ScraperManager
@@ -39,21 +40,23 @@ def set_random_album():
 
     set_property('scraper.title', scraper_manager.current_scraper.title)
     set_property('album.title', album['title'])
-    set_property('album.photo_count', len(photos))
+    set_property('album.photo_count', str(len(photos)))
     for i, photo in enumerate(photos):
         for key in ('pic', 'description', 'title'):
             set_property('photo.%d.%s' % (i, key), photo[key])
+    if DEBUG:
+        xbmc.executebuiltin('XBMC.Notification("Done", "TBP Widget", 1000)')
 
 
 def set_property(key, value):
     key = 'bigpictures.%s' % key
     if DEBUG:
-        log(u'[%s] -> "%s"' % (key, value))
-    WINDOW.setProperty(key, str(value))
+        log(u'[%s] -> %s' % (key, repr(value)))
+    WINDOW.setProperty(key, value.encode('utf-8'))
 
 
 def log(text):
-    print u'The Big Pictures Widget: %s' % text
+    xbmc.log(u'The Big Pictures Widget: %s' % text)
 
 
 if __name__ == '__main__':
