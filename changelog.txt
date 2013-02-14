@@ -1,0 +1,7 @@
+0.0.3
+ - set album_url and scraper_id (for slideshow start)
+0.0.2
+ - fixed unicode error
+ - show notification when done and debug enabled
+0.0.1
+ - initial release

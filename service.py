@@ -39,7 +39,9 @@ def set_random_album():
     photos = scraper_manager.get_photos(album['album_url'])
 
     set_property('scraper.title', scraper_manager.current_scraper.title)
+    set_property('scraper.id', str(scraper_manager.current_scraper._id))
     set_property('album.title', album['title'])
+    set_property('album.url', album['album_url'])
     set_property('album.photo_count', str(len(photos)))
     for i, photo in enumerate(photos):
         for key in ('pic', 'description', 'title'):
