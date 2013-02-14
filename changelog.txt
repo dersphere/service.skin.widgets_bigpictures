@@ -1,3 +1,7 @@
+0.0.4
+ - clear properties before adding new
+ - added MAX_ITEMS (default 20)
+ - unified log messages
 0.0.3
  - set album_url and scraper_id (for slideshow start)
 0.0.2

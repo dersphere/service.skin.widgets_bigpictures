@@ -25,11 +25,14 @@ import xbmcgui
 from thebigpictures import ScraperManager
 
 DEBUG = True
+MAX_ITEMS = 20
+PROPERTY_PREFIX = 'bigpictures'
 
 WINDOW = xbmcgui.Window(10000)
 
 
 def set_random_album():
+    clear_properties()
     scraper_manager = ScraperManager()
 
     scraper_manager.shuffle()
@@ -42,23 +45,48 @@ def set_random_album():
     set_property('scraper.id', str(scraper_manager.current_scraper._id))
     set_property('album.title', album['title'])
     set_property('album.url', album['album_url'])
-    set_property('album.photo_count', str(len(photos)))
+    set_property('album.photo_count', str(min(len(photos), MAX_ITEMS)))
     for i, photo in enumerate(photos):
         for key in ('pic', 'description', 'title'):
             set_property('photo.%d.%s' % (i, key), photo[key])
+        if i + 1 == MAX_ITEMS:
+            break
     if DEBUG:
         xbmc.executebuiltin('XBMC.Notification("Done", "TBP Widget", 1000)')
 
 
+def clear_properties():
+    current_len = get_property('album.photo_count')
+    if current_len:
+        current_len = int(current_len)
+        for i in xrange(current_len):
+            for key in ('pic', 'description', 'title'):
+                clear_property('photo.%d.%s' % (i, key))
+            if i + 1 == MAX_ITEMS:
+                break
+
+
 def set_property(key, value):
-    key = 'bigpictures.%s' % key
+    key = '%s.%s' % (PROPERTY_PREFIX, key)
     if DEBUG:
         log(u'[%s] -> %s' % (key, repr(value)))
     WINDOW.setProperty(key, value.encode('utf-8'))
 
 
+def get_property(key):
+    key = '%s.%s' % (PROPERTY_PREFIX, key)
+    return WINDOW.getProperty(key)
+
+
+def clear_property(key):
+    key = '%s.%s' % (PROPERTY_PREFIX, key)
+    if DEBUG:
+        log(u'[%s] -> cleared' % key)
+    return WINDOW.clearProperty(key)
+
+
 def log(text):
-    xbmc.log(u'The Big Pictures Widget: %s' % text)
+    xbmc.log(u'TheBigPictures Widget: %s' % text)
 
 
 if __name__ == '__main__':
